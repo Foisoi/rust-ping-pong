@@ -1,8 +1,11 @@
-mod primitives;
+mod vec2;
+mod board;
+mod objects;
+
 extern crate ncurses;
 
 use ncurses::*;
-use primitives::*;
+use board::*;
 use std::process::exit;
 use std::time::Instant;
 
@@ -22,11 +25,11 @@ fn main() {
 
     // Initializing matrix
     let mut board = [[' '; WIDTH - 1]; HEIGHT - 1];
-    // Initializing objects' characteristics
+    // Initializing objects
     let mut score: [u8; 2] = [0, 0];
-    let mut player_plate = PPPlate::new(6, 19);
-    let mut machine_plate = PPPlate::new((WIDTH as i32) - 6, 19);
-    let mut ball = PPBall::new((WIDTH / 2) as i32, (HEIGHT / 2) as i32);
+    let mut player_plate = objects::PPPlate::new(6, 19);
+    let mut machine_plate = objects::PPPlate::new((WIDTH as i32) - 6, 19);
+    let mut ball = objects::PPBall::new((WIDTH / 2) as i32, (HEIGHT / 2) as i32);
 
     // Drawing frame
     loop {
@@ -67,7 +70,9 @@ fn main() {
             ball_delay = Instant::now();
         }
 
-        if machine_plate_delay.elapsed().as_millis() > 40 {
+        let threshold = (40f32 * ((WIDTH as f32) / (ball.get_pos().x as f32))) as u128; // For so called "equality" between machine and player
+        mvprintw(40, 40, threshold.to_string().as_str());
+        if machine_plate_delay.elapsed().as_millis() > threshold {
             if ball.get_pos().y < machine_plate.get_pos().y {
                 machine_plate.step(-1);
             } else {
@@ -75,7 +80,7 @@ fn main() {
             }
             machine_plate_delay = Instant::now();
         }
-        // Cleaning the whole board
+        // Cleaning the whole board (remove the next line if you want to see all possible ball paths for particular board size)
         board = [[' '; WIDTH - 1]; HEIGHT - 1];
     }
 }
