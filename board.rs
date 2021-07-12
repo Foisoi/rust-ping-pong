@@ -5,6 +5,9 @@ pub const HEIGHT: usize = 35;
 
 pub type PPBoard = [[char; WIDTH - 1]; HEIGHT - 1];
 
+// pub fn build_complexity_selection(mat: &mut PPBoard) {
+//     mat
+// }
 
 pub fn build_border(mat: &mut PPBoard) {
     for x in 0..mat[0].len() {
@@ -19,8 +22,10 @@ pub fn build_border(mat: &mut PPBoard) {
     }
 }
 
-pub fn build_scoreboard(mat: &mut PPBoard) {
-    
+pub fn build_scoreboard(x: i32, y: i32, score: &[u8; 2]) {
+    let formatted_score = format!("{}:{}", score[0], score[1]);
+    mvprintw(y, x - 5, "Score board");
+    mvprintw(y + 1, x - ((&formatted_score).len() as i32 / 2), formatted_score.as_str());
 }
 
 pub fn draw_frame(mat: &PPBoard, wx: i32, wy: i32) {

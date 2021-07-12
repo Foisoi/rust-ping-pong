@@ -14,7 +14,6 @@ fn main() {
     // Initializing ncurses
     initscr();
     raw();
-    noecho();
     keypad(stdscr(), true);
     nodelay(stdscr(), true);
     curs_set(CURSOR_VISIBILITY::CURSOR_INVISIBLE);
@@ -33,13 +32,11 @@ fn main() {
 
     // Drawing frame
     loop {
-        let terminal_bounds = (COLS(), LINES()); // Width & height of terminal
         match getch() {
             259 => {
                 player_plate.step(-1);
             },
-            3 | 4 => { // Pattern for exiting program if ctrl+c or ctrl+d pressed
-                echo();
+            3 | 4 => { // Pattern for exiting program if user pressed ctrl+c or ctrl+d
                 endwin();
                 // todo: Pretty-print score at the of the game
                 exit(0);
@@ -54,9 +51,10 @@ fn main() {
         ball.render(&mut board);
         player_plate.render(&mut board);
         machine_plate.render(&mut board);
-        // Drawing in terminal
+        // Displaying matrix in terminal
         clean_frame(COLS(), LINES());
-        draw_frame(&mut board, (terminal_bounds.0 - (WIDTH as i32)) / 2, (terminal_bounds.1 - (HEIGHT as i32)) / 2);
+        draw_frame(&mut board, (COLS() - (WIDTH as i32)) / 2, 4);
+        build_scoreboard(COLS() / 2, 1, &score);
         refresh();
         // Update ball position roughly every 40ms
         if ball_delay.elapsed().as_millis() > 40 {
@@ -71,7 +69,6 @@ fn main() {
         }
 
         let threshold = (40f32 * ((WIDTH as f32) / (ball.get_pos().x as f32))) as u128; // For so called "equality" between machine and player
-        mvprintw(40, 40, threshold.to_string().as_str());
         if machine_plate_delay.elapsed().as_millis() > threshold {
             if ball.get_pos().y < machine_plate.get_pos().y {
                 machine_plate.step(-1);
