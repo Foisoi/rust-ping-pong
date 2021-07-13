@@ -1,15 +1,15 @@
 use std::ops::BitXor;
 use std::time::{SystemTime, UNIX_EPOCH};
 
-fn rn4() -> u8 {
+pub fn random_u8() -> u8 {
     let t = SystemTime::now().duration_since(UNIX_EPOCH).unwrap().as_micros();
     let p = *(&t).to_string().as_bytes().last().unwrap();
-    (t.bitxor(p as u128) as u8) % 4u8
+    t.bitxor(p as u128) as u8
 }
 
 pub fn random_trajectory() -> i8 {
     let mut sign = 1i8;
-    if rn4() >= 2 {
+    if random_u8() >= 64 {
         sign = -1;
     }
     sign

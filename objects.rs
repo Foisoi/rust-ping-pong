@@ -31,7 +31,7 @@ impl PPBall {
         if nx < 1 || ny < 1 || nx > (WIDTH - 3) as i32 || ny > (HEIGHT - 3) as i32 {
             if x == 1 || x == (WIDTH - 3) as i32 {
                 self.target = Vec2::random();
-                self.pos = Vec2::new((WIDTH / 2) as i32, (HEIGHT / 2) as i32);
+                self.pos = Vec2::new((WIDTH / 2) as i32,  (random_u8() as i32) % (HEIGHT as i32 - 2));
                 return Some((x > (WIDTH / 2) as i32) as u8);
             }
             if y == 1 || y == (HEIGHT - 3) as i32 {
@@ -48,23 +48,24 @@ impl PPBall {
 #[derive(Copy, Clone)]
 pub struct PPPlate {
     pos: Vec2,
+    height: i32,
 }
 
 impl PPPlate {
-    pub fn new(x: i32, y: i32) -> Self {
-        PPPlate { pos: Vec2::new(x, y) }
+    pub fn new(x: i32, y: i32, height: i32) -> Self {
+        PPPlate { pos: Vec2::new(x, y), height }
     }
 
     pub fn get_pos(&self) -> Vec2 { self.pos }
 
     pub fn step(&mut self, by: i32) {
-        if self.pos.y + by > 4 && self.pos.y + by < (HEIGHT - 5) as i32 {
+        if self.pos.y + by > self.height as i32 && self.pos.y + by < (HEIGHT as i32 - self.height - 1) as i32 {
             self.pos.y += by;
         }
     }
 
     pub fn render(&mut self, mat: &mut PPBoard) {
-        for p in (self.pos.y-4)..(self.pos.y+4) {
+        for p in (self.pos.y-self.height)..(self.pos.y+self.height) {
             mat[p as usize][self.pos.x as usize] = '|';
         }
     }
