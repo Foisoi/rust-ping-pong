@@ -1,5 +1,5 @@
 # Ping-Pong game
-#### Console edition written in Rust language
+#### A console edition written in Rust language
 
 ## Installation
 Copy files from this repository and add ncurses library to your Cargo.toml file.
