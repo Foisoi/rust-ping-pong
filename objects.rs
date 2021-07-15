@@ -35,6 +35,9 @@ impl PPBall {
                 return Some((x > (WIDTH / 2) as i32) as u8);
             }
             if y == 1 || y == (HEIGHT - 3) as i32 {
+                if mat[y as usize][nx as usize] == '|' {
+                    self.target.x = -self.target.x;
+                }
                 self.target.y = -self.target.y;
             }
         } else if mat[ny as usize][nx as usize] == '|' {
